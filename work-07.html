@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<link rel="preload" as="image" href="images/project-07/thumbs/1.jpg">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双11超值好省节 — WULUN</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111;
+            --border: #222;
+            --text: #e0e0e0;
+            --text-dim: #666;
+            --accent: #c9a96e;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "PingFang SC", sans-serif;
+            font-size: 15px;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== 顶部导航 ===== */
+        .header {
+            padding: 1.2rem 5%;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+        .header h1 { 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            letter-spacing: 2px; 
+            color: #fff; 
+        }
+        .header-nav { display: flex; gap: 0.8rem; align-items: center; }
+        .header-nav a, .header-nav button {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.85rem;
+            background: none;
+            border: 1px solid #333;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .header-nav a:hover, .header-nav button:hover { 
+            color: #fff; 
+            border-color: #fff; 
+        }
+
+        /* ===== 首屏大图 ===== */
+        .hero {
+            width: 100%;
+            aspect-ratio: 21/9;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+            background: var(--surface);
+        }
+        .hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        .hero img.loaded { opacity: 1; }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.7) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 3rem 5%;
+        }
+        .hero-tag {
+            font-size: 0.75rem;
+            color: var(--accent);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .hero h2 {
+            font-size: clamp(1.8rem, 4vw, 3.5rem);
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
+            max-width: 700px;
+        }
+
+        /* ===== 内容区 ===== */
+        .content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 5%;
+        }
+
+        /* 元信息 */
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .meta-item dt {
+            font-size: 0.7rem;
+            color: #555;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 0.6rem;
+            font-weight: 500;
+        }
+        .meta-item dd { 
+            color: #fff; 
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .meta-item dd .highlight {
+            color: var(--accent);
+        }
+
+        /* 文字内容 */
+        .story { max-width: 720px; }
+        .story h3 {
+            font-size: 1.1rem;
+            color: #fff;
+            margin: 2.5rem 0 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .story p {
+            color: #888;
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+        .story strong { 
+            color: #fff; 
+            font-weight: 500; 
+        }
+        .story em {
+            color: #aaa;
+            font-style: normal;
+        }
+
+        /* 分隔线 */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4rem 0;
+        }
+
+        /* ===== 图片画廊 ===== */
+        .section-label {
+            font-size: 0.7rem;
+            color: #555;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+            margin-bottom: 4rem;
+        }
+        .gallery-item {
+            aspect-ratio: 16/10;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+        .gallery-item:hover {
+            border-color: #444;
+            transform: translateY(-2px);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .gallery-item img.loaded { opacity: 1; }
+        .gallery-item:hover img { transform: scale(1.03); }
+
+        .gallery-item.wide { 
+            grid-column: 1 / -1; 
+            aspect-ratio: 21/9; 
+        }
+
+        /* 图片标注 */
+        .img-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.2rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85));
+            font-size: 0.8rem;
+            color: #aaa;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .gallery-item:hover .img-caption { opacity: 1; }
+
+        /* ===== 灯箱 ===== */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .lightbox img {
+            max-width: 92vw;
+            max-height: 88vh;
+            object-fit: contain;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 44px;
+            height: 44px;
+            border: 1px solid #444;
+            background: rgba(10,10,10,0.9);
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .lightbox-close:hover { 
+            background: #fff; 
+            color: var(--bg); 
+        }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 80px;
+            background: rgba(10,10,10,0.8);
+            border: 1px solid #333;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .lightbox-nav:hover { 
+            background: #fff; 
+            color: var(--bg); 
+        }
+        .lightbox-prev { left: 1rem; }
+        .lightbox-next { right: 1rem; }
+        .lightbox-counter {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #666;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+        }
+
+        /* ===== 底部导航 ===== */
+        .footer-nav {
+            border-top: 1px solid var(--border);
+            padding: 2.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .footer-nav a { 
+            color: #666; 
+            text-decoration: none; 
+            font-size: 0.9rem; 
+            transition: color 0.3s; 
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .footer-nav a:hover { color: #fff; }
+        .footer-nav a .arrow { 
+            font-size: 1.1rem; 
+            transition: transform 0.3s; 
+        }
+        .footer-nav a:hover .arrow { transform: translateX(4px); }
+        .footer-nav a:first-child:hover .arrow { transform: translateX(-4px); }
+
+        /* ===== 动画 ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 768px) {
+            .meta { 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 1.5rem; 
+            }
+            .gallery { 
+                grid-template-columns: 1fr; 
+                gap: 1rem;
+            }
+            .gallery-item.wide { aspect-ratio: 16/9; }
+            .hero { aspect-ratio: 16/9; min-height: 300px; }
+            .header h1 { font-size: 0.85rem; }
+            .header-nav a, .header-nav button { 
+                padding: 0.4rem 0.8rem; 
+                font-size: 0.8rem; 
+            }
+            .footer-nav { 
+                flex-direction: column; 
+                gap: 1rem; 
+                align-items: center; 
+            }
+            .lightbox-nav { display: none; }
+        }
+    </style>
+<style>
+img[loading="lazy"] { opacity: 0; transition: opacity 0.4s; }
+img[loading="lazy"].loaded, img[fetchpriority="high"].loaded { opacity: 1; }
+</style>
+</head>
+<body>
+
+    <!-- 顶部导航 -->
+    <div class="header">
+        <h1>双11超值好省节 — WULUN</h1>
+        <div class="header-nav">
+            <a href="work-06.html">← 上一个</a>
+            <a href="work-08.html">下一个 →</a>
+        </div>
+    </div>
+
+    <!-- 首屏大图 -->
+    <div class="hero">
+        <img loading="lazy" decoding="async" src="images/project-07/thumbs/1.jpg" alt="双11超值好省节 珠海站" onload="this.classList.add('loaded')">
+        <div class="hero-overlay">
+            <div class="hero-tag">Pop-up Store Campaign</div>
+            <h2>双11超值好省节<br>快闪店视觉呈现</h2>
+        </div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="content">
+
+        <!-- 项目元信息 -->
+        <dl class="meta reveal">
+            <div class="meta-item">
+                <dt>项目类型</dt>
+                <dd>快闪店 / 线下活动视觉</dd>
+            </div>
+            <div class="meta-item">
+                <dt>使用工具</dt>
+                <dd><span class="highlight">C4D</span> / <span class="highlight">UE5</span>/ Photoshop/ Illustrator</dd>
+            </div>
+            <div class="meta-item">
+                <dt>活动城市</dt>
+                <dd>珠海（蓝色版）<br>南宁（绿色版）</dd>
+            </div>
+            <div class="meta-item">
+                <dt>输出规格</dt>
+                <dd>活动照片 × 35 张<br>线下物料设计</dd>
+            </div>
+        </dl>
+
+        <!-- 项目描述 -->
+        <div class="story reveal">
+            <h3>项目背景</h3>
+            <p>
+                为 <strong>双11超值好省节</strong> 打造线下快闪店视觉方案，分别在 <strong>珠海</strong> 和 <strong>南宁</strong> 两地落地执行。
+                项目涵盖快闪店空间设计、品牌装置、活动物料及现场执行的全流程视觉呈现，
+                旨在通过沉浸式的线下体验，强化品牌认知并促进用户互动参与。
+            </p>
+
+            <h3>核心挑战</h3>
+            <p>
+                快闪店需要在短时间内快速搭建并吸引人流，因此视觉设计必须具备强烈的辨识度和传播性。
+                <em>珠海站（室内）</em>采用蓝色主题，呼应海滨城市的清新气质；
+                <em>南宁站（户外）</em>采用绿色主题，契合绿城南宁的自然氛围。
+                两站虽主题色系不同，但需保持统一的品牌视觉语言，确保活动在全国范围内的品牌一致性。
+            </p>
+
+            <h3>解法与交付</h3>
+            <p>
+                通过 <strong>C4D</strong>+<strong>UE5</strong> 进行空间建模与渲染，精确还原快闪店的空间布局与品牌装置效果。
+                结合品牌主视觉进行延展设计，输出包括门头、展架、互动装置、拍照打卡点等全套线下物料。
+                活动现场通过专业摄影记录，捕捉人流互动、装置细节与整体氛围，
+                为后续品牌传播提供高质量视觉素材。
+            </p>
+            <p>
+                最终两站活动均圆满完成，快闪店成为当地商圈的打卡热点，
+                有效提升了品牌在目标城市的曝光度与用户参与度。
+            </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 珠海站 — 蓝色版快闪店 -->
+        <div class="reveal">
+            <div class="section-label">Zhuhai — 珠海站 · 室内蓝色版</div>
+            <div class="gallery">
+                <div class="gallery-item wide" onclick="openLightbox(0)">
+                    <img src="images/project-07/thumbs/1.jpg" alt="珠海站全景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">珠海站 · 快闪店全景</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(1)">
+                    <img src="images/project-07/thumbs/2.jpg" alt="珠海站门头" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">珠海站 · 快闪店鸟瞰</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(2)">
+                    <img src="images/project-07/thumbs/3.jpg" alt="珠海站入口" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">珠海站 · 快闪店鸟瞰</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(3)">
+                    <img src="images/project-07/thumbs/4.jpg" alt="珠海站内部" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">珠海站 · 正面空间</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(4)">
+                    <img src="images/project-07/thumbs/5.jpg" alt="珠海站装置" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">珠海站 · 背面空间</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(5)">
+                    <img src="images/project-07/thumbs/6.jpg" alt="珠海站互动区" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">珠海站 · 心动LOGO打卡点</div>
+                </div>
+                <div class="gallery-item wide" onclick="openLightbox(6)">
+                    <img src="images/project-07/thumbs/7.jpg" alt="珠海站打卡点" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">珠海站 · 拍照打卡点</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(7)">
+                    <img src="images/project-07/thumbs/8.jpg" alt="珠海站细节" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">珠海站 · 泡雕美陈细节展示</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(12)">
+                    <img src="images/project-07/thumbs/13.jpg" alt="珠海站特写" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">珠海站 · 泡雕美陈细节展示</div>
+                </div>				
+                <div class="gallery-item" onclick="openLightbox(8)">
+                    <img src="images/project-07/thumbs/9.jpg" alt="珠海站人流" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">珠海站 · 泡雕美陈细节展示</div>
+                </div>								
+                <div class="gallery-item" onclick="openLightbox(9)">
+                    <img src="images/project-07/thumbs/10.jpg" alt="珠海站夜景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">珠海站 · 灯塔美陈细节展示</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(10)">
+                    <img src="images/project-07/thumbs/11.jpg" alt="珠海站俯视图" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">珠海站 · 热气球美陈细节展示</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(11)">
+                    <img src="images/project-07/thumbs/12.jpg" alt="珠海站侧面" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">珠海站 · 顶视全景</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 南宁站 — 绿色版快闪店 -->
+        <div class="reveal">
+            <div class="section-label">Nanning — 南宁站 · 户外绿色版</div>
+            <div class="gallery">
+                <div class="gallery-item wide" onclick="openLightbox(13)">
+                    <img src="images/project-07/thumbs/17.jpg" alt="南宁站全景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 快闪店全景</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(14)">
+                    <img src="images/project-07/thumbs/18.jpg" alt="南宁站门头" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 鸟瞰全景</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(15)">
+                    <img src="images/project-07/thumbs/19.jpg" alt="南宁站入口" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 鸟瞰全景</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(16)">
+                    <img src="images/project-07/thumbs/20.jpg" alt="南宁站内部" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 正面空间</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(17)">
+                    <img src="images/project-07/thumbs/21.jpg" alt="南宁站装置" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 右侧空间</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(18)">
+                    <img src="images/project-07/thumbs/22.jpg" alt="南宁站互动区" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 左侧空间</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(19)">
+                    <img src="images/project-07/thumbs/23.jpg" alt="南宁站打卡点" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 背面空间</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(20)">
+                    <img src="images/project-07/thumbs/24.jpg" alt="南宁站细节" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 细节展示</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(21)">
+                    <img src="images/project-07/thumbs/25.jpg" alt="南宁站人流" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 顶视全景</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(22)">
+                    <img src="images/project-07/thumbs/26.jpg" alt="南宁站夜景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 打卡点-超值加油站</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(23)">
+                    <img src="images/project-07/thumbs/27.jpg" alt="南宁站俯视图" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 打卡点-超值加油站</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(24)">
+                    <img src="images/project-07/thumbs/28.jpg" alt="南宁站侧面" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 南宁建筑打卡点</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(25)">
+                    <img src="images/project-07/thumbs/29.jpg" alt="南宁站特写" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 品牌装置特写</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(26)">
+                    <img src="images/project-07/thumbs/30.jpg" alt="南宁站互动" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · 用户互动</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(27)">
+                    <img src="images/project-07/thumbs/31.jpg" alt="南宁站展示" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁站 · CITY兑换处侧视</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 南宁户外场景 -->
+        <div class="reveal">
+            <div class="section-label">Nanning Outdoor — 南宁户外场景</div>
+            <div class="gallery">
+                <div class="gallery-item" onclick="openLightbox(31)">
+                    <img src="images/project-07/thumbs/35.jpg" alt="南宁户外人流" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁户外 · DP打卡点正面</div>
+                </div>				
+                <div class="gallery-item" onclick="openLightbox(28)">
+                    <img src="images/project-07/thumbs/32.jpg" alt="南宁户外全景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁户外 · DP打卡鸟瞰全景</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(29)">
+                    <img src="images/project-07/thumbs/33.jpg" alt="南宁户外入口" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁户外 · 啤酒美陈正面</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(30)">
+                    <img src="images/project-07/thumbs/34.jpg" alt="南宁户外装置" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">南宁户外 · 啤酒美陈鸟瞰</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="footer-nav">
+        <a href="#" onclick="closePage(); return false;">
+            <span class="arrow">←</span> 返回首页
+        </a>
+        <a href="work-08.html">
+            下一个项目 <span class="arrow">→</span>
+        </a>
+    </div>
+
+    <!-- 灯箱 -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+        <button class="lightbox-close" onclick="closeLightbox()">×</button>
+        <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">‹</button>
+        <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">›</button>
+        <img src="" alt="" id="lightboxImg">
+        <div class="lightbox-counter" id="lightboxCounter">1 / 35</div>
+    </div>
+
+    <script>
+        // 图片列表（与画廊顺序一致）
+        const galleryImages = [
+            'images/project-07/1.jpg',
+            'images/project-07/2.jpg',
+            'images/project-07/3.jpg',
+            'images/project-07/4.jpg',
+            'images/project-07/5.jpg',
+            'images/project-07/6.jpg',
+            'images/project-07/7.jpg',
+            'images/project-07/8.jpg',
+            'images/project-07/9.jpg',
+            'images/project-07/10.jpg',
+            'images/project-07/11.jpg',
+            'images/project-07/12.jpg',
+            'images/project-07/13.jpg',
+            'images/project-07/17.jpg',
+            'images/project-07/18.jpg',
+            'images/project-07/19.jpg',
+            'images/project-07/20.jpg',
+            'images/project-07/21.jpg',
+            'images/project-07/22.jpg',
+            'images/project-07/23.jpg',
+            'images/project-07/24.jpg',
+            'images/project-07/25.jpg',
+            'images/project-07/26.jpg',
+            'images/project-07/27.jpg',
+            'images/project-07/28.jpg',
+            'images/project-07/29.jpg',
+            'images/project-07/30.jpg',
+            'images/project-07/31.jpg',
+            'images/project-07/32.jpg',
+            'images/project-07/33.jpg',
+            'images/project-07/34.jpg',
+            'images/project-07/35.jpg'
+        ];
+
+        let currentIndex = 0;
+
+        function openLightbox(index) {
+            currentIndex = index;
+            document.getElementById('lightboxImg').src = galleryImages[index];
+            document.getElementById('lightboxCounter').textContent = `${index + 1} / ${galleryImages.length}`;
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            if (e && e.target !== e.currentTarget && !e.target.closest('.lightbox-close') && !e.target.closest('.lightbox-nav')) return;
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function navigateLightbox(direction) {
+            currentIndex = (currentIndex + direction + galleryImages.length) % galleryImages.length;
+            document.getElementById('lightboxImg').src = galleryImages[currentIndex];
+            document.getElementById('lightboxCounter').textContent = `${currentIndex + 1} / ${galleryImages.length}`;
+        }
+
+        // 键盘导航
+        document.addEventListener('keydown', e => {
+            if (!document.getElementById('lightbox').classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navigateLightbox(-1);
+            if (e.key === 'ArrowRight') navigateLightbox(1);
+        });
+
+
+        // 关闭弹窗 - 直接关闭窗口（支持iframe弹窗和独立页面）
+        function closePage() {
+            // 优先尝试调用父窗口的关闭方法
+            if (window.parent && window.parent.closeModal) {
+                window.parent.closeModal();
+            } else if (window.parent) {
+                // 尝试发送关闭消息
+                window.parent.postMessage('close', '*');
+                window.parent.postMessage({ type: 'close-modal' }, '*');
+            }
+            // 尝试关闭当前窗口
+            try { window.close(); } catch(e) {}
+            // 最后尝试返回上一页
+            try { history.back(); } catch(e) {}
+        }
+
+        // 滚动显示动画
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => { 
+                if (e.isIntersecting) e.target.classList.add('visible'); 
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+</html>

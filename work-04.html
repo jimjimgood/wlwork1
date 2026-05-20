@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<link rel="preload" as="image" href="images/project-04/thumbs/1.jpg">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>霸王茶姬 × 2023贵阳草莓音乐节 — WULUN</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111;
+            --border: #222;
+            --text: #e0e0e0;
+            --text-dim: #666;
+            --accent: #c9a96e;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "PingFang SC", sans-serif;
+            font-size: 15px;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== 顶部导航 ===== */
+        .header {
+            padding: 1.2rem 5%;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+        .header h1 { 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            letter-spacing: 2px; 
+            color: #fff; 
+        }
+        .header-nav { display: flex; gap: 0.8rem; align-items: center; }
+        .header-nav a, .header-nav button {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.85rem;
+            background: none;
+            border: 1px solid #333;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .header-nav a:hover, .header-nav button:hover { 
+            color: #fff; 
+            border-color: #fff; 
+        }
+
+        /* ===== 首屏大图 ===== */
+        .hero {
+            width: 100%;
+            aspect-ratio: 21/9;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+            background: var(--surface);
+        }
+        .hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        .hero img.loaded { opacity: 1; }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.7) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 3rem 5%;
+        }
+        .hero-tag {
+            font-size: 0.75rem;
+            color: var(--accent);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .hero h2 {
+            font-size: clamp(1.8rem, 4vw, 3.5rem);
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
+            max-width: 700px;
+        }
+
+        /* ===== 内容区 ===== */
+        .content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 5%;
+        }
+
+        /* 元信息 */
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .meta-item dt {
+            font-size: 0.7rem;
+            color: #555;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 0.6rem;
+            font-weight: 500;
+        }
+        .meta-item dd { 
+            color: #fff; 
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .meta-item dd .highlight {
+            color: var(--accent);
+        }
+
+        /* 文字内容 */
+        .story { max-width: 720px; }
+        .story h3 {
+            font-size: 1.1rem;
+            color: #fff;
+            margin: 2.5rem 0 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .story p {
+            color: #888;
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+        .story strong { 
+            color: #fff; 
+            font-weight: 500; 
+        }
+        .story em {
+            color: #aaa;
+            font-style: normal;
+        }
+
+        /* 分隔线 */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4rem 0;
+        }
+
+        /* ===== 图片画廊 ===== */
+        .section-label {
+            font-size: 0.7rem;
+            color: #555;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+            margin-bottom: 4rem;
+        }
+        .gallery-item {
+            aspect-ratio: 16/10;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+        .gallery-item:hover {
+            border-color: #444;
+            transform: translateY(-2px);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .gallery-item img.loaded { opacity: 1; }
+        .gallery-item:hover img { transform: scale(1.03); }
+
+        .gallery-item.wide { 
+            grid-column: 1 / -1; 
+            aspect-ratio: 21/9; 
+        }
+
+        /* 图片标注 */
+        .img-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.2rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85));
+            font-size: 0.8rem;
+            color: #aaa;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .gallery-item:hover .img-caption { opacity: 1; }
+
+        /* ===== 视频区 ===== */
+        .video-section {
+            margin-bottom: 4rem;
+        }
+        .video-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            position: relative;
+        }
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-caption {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* ===== 灯箱 ===== */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .lightbox img {
+            max-width: 92vw;
+            max-height: 88vh;
+            object-fit: contain;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 44px;
+            height: 44px;
+            border: 1px solid #444;
+            background: rgba(10,10,10,0.9);
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .lightbox-close:hover { 
+            background: #fff; 
+            color: var(--bg); 
+        }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 80px;
+            background: rgba(10,10,10,0.8);
+            border: 1px solid #333;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .lightbox-nav:hover { 
+            background: #fff; 
+            color: var(--bg); 
+        }
+        .lightbox-prev { left: 1rem; }
+        .lightbox-next { right: 1rem; }
+        .lightbox-counter {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #666;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+        }
+
+        /* ===== 底部导航 ===== */
+        .footer-nav {
+            border-top: 1px solid var(--border);
+            padding: 2.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .footer-nav a { 
+            color: #666; 
+            text-decoration: none; 
+            font-size: 0.9rem; 
+            transition: color 0.3s; 
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .footer-nav a:hover { color: #fff; }
+        .footer-nav a .arrow { 
+            font-size: 1.1rem; 
+            transition: transform 0.3s; 
+        }
+        .footer-nav a:hover .arrow { transform: translateX(4px); }
+        .footer-nav a:first-child:hover .arrow { transform: translateX(-4px); }
+
+        /* ===== 动画 ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 768px) {
+            .meta { 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 1.5rem; 
+            }
+            .gallery { 
+                grid-template-columns: 1fr; 
+                gap: 1rem;
+            }
+            .gallery-item.wide { aspect-ratio: 16/9; }
+            .hero { aspect-ratio: 16/9; min-height: 300px; }
+            .header h1 { font-size: 0.85rem; }
+            .header-nav a, .header-nav button { 
+                padding: 0.4rem 0.8rem; 
+                font-size: 0.8rem; 
+            }
+            .footer-nav { 
+                flex-direction: column; 
+                gap: 1rem; 
+                align-items: center; 
+            }
+            .lightbox-nav { display: none; }
+        }
+    </style>
+<style>
+img[loading="lazy"] { opacity: 0; transition: opacity 0.4s; }
+img[loading="lazy"].loaded, img[fetchpriority="high"].loaded { opacity: 1; }
+</style>
+</head>
+<body>
+
+    <!-- 顶部导航 -->
+    <div class="header">
+        <h1>WULUN — 霸王茶姬 × 2023贵阳草莓音乐节</h1>
+        <div class="header-nav">
+            <a href="work-03.html">← 上一个</a>
+            <a href="work-05.html">下一个 →</a>
+        </div>
+    </div>
+
+    <!-- 首屏大图 -->
+    <div class="hero">
+        <img loading="lazy" decoding="async" src="images/project-04/thumbs/1.jpg" alt="霸王茶姬展位正面全景" onload="this.classList.add('loaded')">
+        <div class="hero-overlay">
+            <div class="hero-tag">Brand Booth Design / Festival Activation</div>
+            <h2>霸王茶姬 × 2023贵阳草莓音乐节<br>品牌展位空间设计</h2>
+        </div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="content">
+
+        <!-- 项目元信息 -->
+        <dl class="meta reveal">
+            <div class="meta-item">
+                <dt>项目类型</dt>
+                <dd>品牌展位 / 音乐节快闪空间</dd>
+            </div>
+            <div class="meta-item">
+                <dt>使用工具</dt>
+                <dd><span class="highlight">C4D</span> / <span class="highlight">UE5</span> / Illustrator / Photoshop</dd>
+            </div>
+            <div class="meta-item">
+                <dt>交付周期</dt>
+                <dd>20 天</dd>
+            </div>
+            <div class="meta-item">
+                <dt>输出规格</dt>
+                <dd>4K 静帧 × 15 张<br>花絮视频 30 秒</dd>
+            </div>
+        </dl>
+
+        <!-- 项目描述 -->
+        <div class="story reveal">
+            <h3>项目背景</h3>
+            <p>
+                为 <strong>霸王茶姬（CHAGEE）</strong> 打造 <strong>2023贵阳草莓音乐节</strong> 品牌展位空间设计方案。
+                项目以「莓事喝杯茶」为主题，将品牌标志性的东方茶文化与现代音乐节场景融合，
+                在户外草坪环境中构建一个兼具品牌展示、产品体验与社交互动的沉浸式快闪空间。
+            </p>
+
+            <h3>核心挑战</h3>
+            <p>
+                展位需在开放式音乐节场地中脱颖而出，同时兼顾功能性与品牌调性表达——
+                <em>空间层面</em>：双圆环交叠的开放式结构，需解决遮阳、人流疏导与多点位互动的平衡；
+                <em>视觉层面</em>：以品牌深蓝为主色调，搭配大面积青花瓷纹理，在户外强光下保持视觉冲击力；
+                <em>体验层面</em>：整合产品售卖、周边展示、拍照打卡、互动游戏四大功能模块，
+                让乐迷在音乐节场景中自然融入品牌体验。
+            </p>
+
+            <h3>解法与交付</h3>
+            <p>
+                采用 <strong>C4D + UE5</strong> 搭建完整展位场景，
+                以两个交叠的圆形空间为核心——一侧为产品售卖与制作区，
+                另一侧为品牌装置与互动体验区，中央以巨型盖碗茶雕塑作为视觉锚点。
+                顶部环形遮阳结构既提供功能性遮蔽，又形成强烈的品牌识别轮廓。
+            </p>
+            <p>
+                材质上运用品牌标志性的 <strong>青花瓷纹理</strong> 与深蓝金属质感，
+                搭配原木色调的露营风格座椅，在东方美学与年轻潮流之间找到平衡点。
+                周边展示区采用洞洞板挂架系统，灵活呈现品牌联名商品。
+                最终交付 <strong>15 张 4K 静帧</strong> 与 <strong>30 秒活动花絮视频</strong>，
+                覆盖展位外观多角度、内部功能细节、人流动线与现场氛围，
+                方案顺利落地执行。
+            </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 展位外观 -->
+        <div class="reveal">
+            <div class="section-label">Exterior — 展位外观</div>
+            <div class="gallery">
+                <div class="gallery-item wide" onclick="openLightbox(0)">
+                    <img src="images/project-04/thumbs/1.jpg" alt="展位正面全景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">展位正面 · 双圆环结构全景</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(1)">
+                    <img src="images/project-04/thumbs/2.jpg" alt="展位侧面视角" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">展位侧面 · 露营风格休息区</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(2)">
+                    <img src="images/project-04/thumbs/6.jpg" alt="展位正面人视" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">正面人视 · 品牌标识与售卖区</div>
+                </div>
+                <div class="gallery-item wide" onclick="openLightbox(3)">
+                    <img src="images/project-04/thumbs/9.jpg" alt="展位外观视角" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">外观视角 · 盖碗茶装置与品牌墙</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 品牌装置 -->
+        <div class="reveal">
+            <div class="section-label">Brand Installation — 品牌装置</div>
+            <div class="gallery">
+                <div class="gallery-item" onclick="openLightbox(4)">
+                    <img src="images/project-04/thumbs/11.jpg" alt="品牌主题墙" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">「莓事喝杯茶」主题墙 · 盖碗茶装置</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(5)">
+                    <img src="images/project-04/thumbs/12.jpg" alt="周边展示区" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">周边展示区 · 洞洞板陈列系统</div>
+                </div>
+                <div class="gallery-item wide" onclick="openLightbox(6)">
+                    <img src="images/project-04/thumbs/8.jpg" alt="CHAGEE品牌墙" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">CHAGEE 品牌墙 · 杯架矩阵展示</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 内部空间 -->
+        <div class="reveal">
+            <div class="section-label">Interior — 内部空间</div>
+            <div class="gallery">
+                <div class="gallery-item" onclick="openLightbox(7)">
+                    <img src="images/project-04/thumbs/10.jpg" alt="内部吧台" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">产品售卖区 · 弧形吧台内部</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(8)">
+                    <img src="images/project-04/thumbs/13.jpg" alt="内部全景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">内部全景 · 环形动线与品牌装置</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(9)">
+                    <img src="images/project-04/thumbs/14.jpg" alt="休息区视角" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">休息区 · 懒人沙发与导演椅</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 互动体验 -->
+        <div class="reveal">
+            <div class="section-label">Interaction — 互动体验</div>
+            <div class="gallery">
+                <div class="gallery-item wide" onclick="openLightbox(10)">
+                    <img src="images/project-04/thumbs/7.jpg" alt="互动游戏区" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">互动游戏区 · 沙包投掷台</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(11)">
+                    <img src="images/project-04/thumbs/15.jpg" alt="整体鸟瞰" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">整体鸟瞰 · 双圆环交叠结构</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 鸟瞰视角 -->
+        <div class="reveal">
+            <div class="section-label">Aerial View — 鸟瞰视角</div>
+            <div class="gallery">
+                <div class="gallery-item" onclick="openLightbox(12)">
+                    <img src="images/project-04/thumbs/3.jpg" alt="鸟瞰视角" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">鸟瞰 · 双圆环空间布局</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(13)">
+                    <img src="images/project-04/thumbs/4.jpg" alt="顶视图" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">顶视图 · 环形遮阳结构</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(14)">
+                    <img src="images/project-04/thumbs/5.jpg" alt="鸟瞰侧面" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">鸟瞰侧面 · 空间层次与材质表现</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 活动花絮 -->
+        <div class="video-section reveal">
+            <div class="section-label">Event Highlights — 活动花絮</div>
+            <div class="video-container">
+                <video autoplay muted loop playsinline poster="images/project-04/1.jpg">
+                    <source src="images/project-04/video.mp4" type="video/mp4">
+                </video>
+            </div>
+            <p class="video-caption">30 秒活动花絮视频 · 展示展位现场人气与互动体验</p>
+        </div>
+
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="footer-nav">
+        <a href="#" onclick="closePage(); return false;">
+            <span class="arrow">←</span> 返回首页
+        </a>
+        <a href="work-05.html">
+            下一个项目 <span class="arrow">→</span>
+        </a>
+    </div>
+
+    <!-- 灯箱 -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+        <button class="lightbox-close" onclick="closeLightbox()">×</button>
+        <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">‹</button>
+        <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">›</button>
+        <img src="" alt="" id="lightboxImg">
+        <div class="lightbox-counter" id="lightboxCounter">1 / 15</div>
+    </div>
+
+    <script>
+        // 图片列表（与画廊顺序一致）
+        const galleryImages = [
+            'images/project-04/1.jpg',
+            'images/project-04/2.jpg',
+            'images/project-04/6.jpg',
+            'images/project-04/9.jpg',
+            'images/project-04/11.jpg',
+            'images/project-04/12.jpg',
+            'images/project-04/8.jpg',
+            'images/project-04/10.jpg',
+            'images/project-04/13.jpg',
+            'images/project-04/14.jpg',
+            'images/project-04/7.jpg',
+            'images/project-04/15.jpg',
+            'images/project-04/3.jpg',
+            'images/project-04/4.jpg',
+            'images/project-04/5.jpg'
+        ];
+
+        let currentIndex = 0;
+
+        function openLightbox(index) {
+            currentIndex = index;
+            document.getElementById('lightboxImg').src = galleryImages[index];
+            document.getElementById('lightboxCounter').textContent = `${index + 1} / ${galleryImages.length}`;
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            if (e && e.target !== e.currentTarget && !e.target.closest('.lightbox-close') && !e.target.closest('.lightbox-nav')) return;
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function navigateLightbox(direction) {
+            currentIndex = (currentIndex + direction + galleryImages.length) % galleryImages.length;
+            document.getElementById('lightboxImg').src = galleryImages[currentIndex];
+            document.getElementById('lightboxCounter').textContent = `${currentIndex + 1} / ${galleryImages.length}`;
+        }
+
+        // 键盘导航
+        document.addEventListener('keydown', e => {
+            if (!document.getElementById('lightbox').classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navigateLightbox(-1);
+            if (e.key === 'ArrowRight') navigateLightbox(1);
+        });
+
+        // 关闭弹窗
+        function closePage() {
+            if (window.parent && window.parent.closeModal) {
+                window.parent.closeModal();
+            } else if (window.parent) {
+                window.parent.postMessage('close', '*');
+                window.parent.postMessage({ type: 'close-modal' }, '*');
+            }
+            try { window.close(); } catch(e) {}
+            try { history.back(); } catch(e) {}
+        }
+
+        // 滚动显示动画
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => { 
+                if (e.isIntersecting) e.target.classList.add('visible'); 
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+</html>

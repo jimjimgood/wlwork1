@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<link rel="preload" as="image" href="images/project-09/thumbs/hero.jpg">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活力广东暖新春 — 广府新春游园会 — WULUN</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111;
+            --border: #222;
+            --text: #e0e0e0;
+            --text-dim: #666;
+            --accent: #c9a96e;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "PingFang SC", sans-serif;
+            font-size: 15px;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== 顶部导航 ===== */
+        .header {
+            padding: 1.2rem 5%;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+        .header h1 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+        .header-nav { display: flex; gap: 0.8rem; align-items: center; }
+        .header-nav a, .header-nav button {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.85rem;
+            background: none;
+            border: 1px solid #333;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .header-nav a:hover, .header-nav button:hover {
+            color: #fff;
+            border-color: #fff;
+        }
+
+        /* ===== 首屏大图 ===== */
+        .hero {
+            width: 100%;
+            aspect-ratio: 21/9;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+            background: var(--surface);
+        }
+        .hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        .hero img.loaded { opacity: 1; }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.7) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 3rem 5%;
+        }
+        .hero-tag {
+            font-size: 0.75rem;
+            color: var(--accent);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .hero h2 {
+            font-size: clamp(1.8rem, 4vw, 3.5rem);
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
+            max-width: 700px;
+        }
+
+        /* ===== 内容区 ===== */
+        .content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 5%;
+        }
+
+        /* 元信息 */
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .meta-item dt {
+            font-size: 0.7rem;
+            color: #555;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 0.6rem;
+            font-weight: 500;
+        }
+        .meta-item dd {
+            color: #fff;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .meta-item dd .highlight {
+            color: var(--accent);
+        }
+
+        /* 文字内容 */
+        .story { max-width: 720px; }
+        .story h3 {
+            font-size: 1.1rem;
+            color: #fff;
+            margin: 2.5rem 0 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .story p {
+            color: #888;
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+        .story strong {
+            color: #fff;
+            font-weight: 500;
+        }
+        .story em {
+            color: #aaa;
+            font-style: normal;
+        }
+
+        /* 分隔线 */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4rem 0;
+        }
+
+        /* ===== 图片画廊 ===== */
+        .section-label {
+            font-size: 0.7rem;
+            color: #555;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+            margin-bottom: 4rem;
+        }
+        .gallery-item {
+            aspect-ratio: 16/10;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+        .gallery-item:hover {
+            border-color: #444;
+            transform: translateY(-2px);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .gallery-item img.loaded { opacity: 1; }
+        .gallery-item:hover img { transform: scale(1.03); }
+
+        .gallery-item.wide {
+            grid-column: 1 / -1;
+            aspect-ratio: 21/9;
+        }
+
+        /* 图片标注 */
+        .img-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.2rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85));
+            font-size: 0.8rem;
+            color: #aaa;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .gallery-item:hover .img-caption { opacity: 1; }
+
+        /* ===== 灯箱 ===== */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .lightbox img {
+            max-width: 92vw;
+            max-height: 88vh;
+            object-fit: contain;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 44px;
+            height: 44px;
+            border: 1px solid #444;
+            background: rgba(10,10,10,0.9);
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .lightbox-close:hover {
+            background: #fff;
+            color: var(--bg);
+        }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 80px;
+            background: rgba(10,10,10,0.8);
+            border: 1px solid #333;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .lightbox-nav:hover {
+            background: #fff;
+            color: var(--bg);
+        }
+        .lightbox-prev { left: 1rem; }
+        .lightbox-next { right: 1rem; }
+        .lightbox-counter {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #666;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+        }
+
+        /* ===== 底部导航 ===== */
+        .footer-nav {
+            border-top: 1px solid var(--border);
+            padding: 2.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .footer-nav a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .footer-nav a:hover { color: #fff; }
+        .footer-nav a .arrow {
+            font-size: 1.1rem;
+            transition: transform 0.3s;
+        }
+        .footer-nav a:hover .arrow { transform: translateX(4px); }
+        .footer-nav a:first-child:hover .arrow { transform: translateX(-4px); }
+
+        /* ===== 动画 ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 768px) {
+            .meta {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+            .gallery {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .gallery-item.wide { aspect-ratio: 16/9; }
+            .hero { aspect-ratio: 16/9; min-height: 300px; }
+            .header h1 { font-size: 0.85rem; }
+            .header-nav a, .header-nav button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            .footer-nav {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+            .lightbox-nav { display: none; }
+        }
+    </style>
+<style>
+img[loading="lazy"] { opacity: 0; transition: opacity 0.4s; }
+img[loading="lazy"].loaded, img[fetchpriority="high"].loaded { opacity: 1; }
+</style>
+</head>
+<body>
+
+    <!-- 顶部导航 -->
+    <div class="header">
+        <h1>WULUN — 活力广东暖新春</h1>
+        <div class="header-nav">
+            <a href="work-08.html">← 上一个</a>
+            <!--<a href="work-10.html">下一个 →</a> -->
+        </div>
+    </div>
+
+    <!-- 首屏大图 -->
+    <div class="hero">
+        <img loading="lazy" decoding="async" src="images/project-09/thumbs/hero.jpg" alt="广府新春游园会全景鸟瞰" onload="this.classList.add('loaded')">
+        <div class="hero-overlay">
+            <div class="hero-tag">Event Space Visualization</div>
+            <h2>活力广东暖新春<br>广府新春游园会</h2>
+        </div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="content">
+
+        <!-- 项目元信息 -->
+        <dl class="meta reveal">
+            <div class="meta-item">
+                <dt>项目类型</dt>
+                <dd>线下活动 / 活动空间可视化</dd>
+            </div>
+            <div class="meta-item">
+                <dt>使用工具</dt>
+                <dd><span class="highlight">C4D</span> / <span class="highlight">Twinmotion</span> /Illustrator /Photoshop</dd>
+            </div>
+            <div class="meta-item">
+                <dt>活动时间</dt>
+                <dd>2月3日-2月4日<br>10:00-16:00</dd>
+            </div>
+            <div class="meta-item">
+                <dt>活动地点</dt>
+                <dd>宝墨园<br>（入口处——怡乐亭/清心亭）</dd>
+            </div>
+        </dl>
+
+        <!-- 项目描述 -->
+        <div class="story reveal">
+            <h3>活动背景</h3>
+            <p>
+                围绕<strong>"活力广东·时尚湾区"</strong>的主题口号，广东文旅厅联动抖音生活服务已落地两场线下活动，
+                充分发挥抖音流量价值，共同将广东美景、美食、美好风物传递出去，让更多人爱上广东。
+            </p>
+            <p>
+                本次活动，抖音生活服务借由春节契机，持续在全网宣传发酵「广东」城市热度，
+                以<strong>"活力广东暖新春"</strong>为主题，通过落地系列广东年味主题活动，
+                将传统庙会、舞狮与新潮市集、表演结合碰撞，助力广东传统非遗过年文化传播，
+                打造民俗旅游新热点，吸引更多游客春节旅游到广东。
+            </p>
+
+            <h3>核心挑战</h3>
+            <p>
+                活动选址于<strong>宝墨园</strong>——一座以岭南古建筑与园林水景闻名的文化景区，
+                需在尊重传统园林风貌的前提下，将现代品牌视觉与春节民俗元素有机融入。
+                空间规划涵盖入口引导区、主装置打卡区、互动游戏区、花灯观赏区等多个功能分区，
+                每个分区既要独立成景，又需在整体动线上形成流畅的游览体验。
+            </p>
+
+            <h3>设计策略</h3>
+            <p>
+                以<strong>"心动目的地"</strong>为核心概念，将抖音品牌基因中的"心动"符号与龙年春节文化深度融合。
+                通过<strong>心动主装置</strong>、<strong>鱼跃龙门</strong>互动区、<strong>花灯弄影</strong>观赏区、
+                <strong>灵龙祈愿</strong>祈福区、<strong>新年启程</strong>出发区五大主题分区，
+                构建一条从"心动"到"启程"的完整情感动线。
+                色彩体系以中国红为主基调，辅以金色与翠绿，既呼应春节喜庆氛围，又与宝墨园的青砖黛瓦形成鲜明视觉对比。
+            </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 心动主装置 -->
+        <div class="reveal">
+            <div class="section-label">Heart Installation — 心动主装置</div>
+            <div class="gallery">
+			
+                <div class="gallery-item wide" onclick="openLightbox(1)">
+                    <img src="images/project-09/thumbs/02-xindong-02.jpg" alt="心动主装置侧面" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">心动主装置 · 龙与心形融合造型</div>
+                </div>
+				
+                <div class="gallery-item" onclick="openLightbox(0)">
+                    <img src="images/project-09/thumbs/01-xindong-01.jpg" alt="心动主装置全景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">心动主装置 · 侧面视角</div>
+                </div>
+
+                <div class="gallery-item" onclick="openLightbox(2)">
+                    <img src="images/project-09/thumbs/03-xindong-03.jpg" alt="心动主装置近景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">心动主装置 · 剪纸龙纹细节</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 鱼跃龙门 -->
+        <div class="reveal">
+            <div class="section-label">Dragon Gate — 鱼跃龙门</div>
+            <div class="gallery">
+                <div class="gallery-item wide" onclick="openLightbox(6)">
+                    <img src="images/project-09/thumbs/07-yuyue-04.jpg" alt="鱼跃龙门装饰" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">鱼跃龙门 · 节日氛围装饰</div>
+                </div>		
+				
+                <div class="gallery-item wide" onclick="openLightbox(4)">
+                    <img src="images/project-09/thumbs/05-yuyue-02.jpg" alt="鱼跃龙门阶梯" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">鱼跃龙门 · 2024 阶梯装置</div>
+                </div>
+				
+                <div class="gallery-item" onclick="openLightbox(3)">
+                    <img src="images/project-09/thumbs/04-yuyue-01.jpg" alt="鱼跃龙门全景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">鱼跃龙门 · 互动游戏区全景</div>
+                </div>
+
+                <div class="gallery-item" onclick="openLightbox(5)">
+                    <img src="images/project-09/thumbs/06-yuyue-03.jpg" alt="鱼跃龙门拍照区" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">鱼跃龙门 · 拍照打卡背景墙</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 花灯弄影 -->
+        <div class="reveal">
+            <div class="section-label">Lantern Garden — 花灯弄影</div>
+            <div class="gallery">
+			
+                <div class="gallery-item wide" onclick="openLightbox(9)">
+                    <img src="images/project-09/thumbs/10-huadeng-03.jpg" alt="花灯弄影近景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">花灯弄影 · 灯笼细节特写</div>
+                </div>
+				
+                <div class="gallery-item" onclick="openLightbox(7)">
+                    <img src="images/project-09/thumbs/08-huadeng-01.jpg" alt="花灯弄影全景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">花灯弄影 · 巨型宫灯装置</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(8)">
+                    <img src="images/project-09/thumbs/09-huadeng-02.jpg" alt="花灯弄影侧面" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">花灯弄影 · 灯笼与接待区</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 灵龙祈愿 -->
+        <div class="reveal">
+            <div class="section-label">Dragon Wishes — 灵龙祈愿</div>
+            <div class="gallery">
+                <div class="gallery-item" onclick="openLightbox(10)">
+                    <img src="images/project-09/thumbs/11-linglong-01.jpg" alt="灵龙祈愿全景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">灵龙祈愿 · 八角亭祈福装置</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(11)">
+                    <img src="images/project-09/thumbs/12-linglong-02.jpg" alt="灵龙祈愿品牌墙" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">灵龙祈愿 · 抖音心动目的地品牌墙</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(12)">
+                    <img src="images/project-09/thumbs/13-linglong-03.jpg" alt="灵龙祈愿近景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">灵龙祈愿 · 金龙纹饰细节</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(13)">
+                    <img src="images/project-09/thumbs/14-linglong-04.jpg" alt="灵龙祈愿互动区" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">灵龙祈愿 · 鸟瞰细节图</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 新年启程 -->
+        <div class="reveal">
+            <div class="section-label">New Year Departure — 新年启程</div>
+            <div class="gallery">
+                <div class="gallery-item wide" onclick="openLightbox(16)">
+                    <img src="images/project-09/thumbs/17-xinnian-03.jpg" alt="新年启程近景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">新年启程 · 灯笼与对联装饰</div>
+                </div>			
+			
+                <div class="gallery-item" onclick="openLightbox(14)">
+                    <img src="images/project-09/thumbs/15-xinnian-01.jpg" alt="新年启程全景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">新年启程 · 牌坊入口装置</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(15)">
+                    <img src="images/project-09/thumbs/16-xinnian-02.jpg" alt="新年启程侧面" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">新年启程 · 龙纹装饰细节</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 服务台 -->
+        <div class="reveal">
+            <div class="section-label">Service Desk — 服务台</div>
+            <div class="gallery">
+                <div class="gallery-item" onclick="openLightbox(17)">
+                    <img src="images/project-09/thumbs/18-fuwutai-01.jpg" alt="服务台正面" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">服务台 · 广府新春游园会服务台</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(18)">
+                    <img src="images/project-09/thumbs/19-fuwutai-02.jpg" alt="服务台侧面" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">服务台 · 活动地图与导览信息</div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- 场地总览 -->
+        <div class="reveal">
+            <div class="section-label">Site Overview — 场地总览</div>
+            <div class="gallery">
+                <div class="gallery-item wide" onclick="openLightbox(21)">
+                    <img src="images/project-09/thumbs/22-sequence-01.jpg" alt="场地鸟瞰一" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">场地总览 · 入口广场与主装置区鸟瞰</div>
+                </div>
+                <div class="gallery-item wide" onclick="openLightbox(22)">
+                    <img src="images/project-09/thumbs/23-sequence-02.jpg" alt="场地鸟瞰二" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">场地总览 · 桥梁水景与花灯区鸟瞰</div>
+                </div>
+                <div class="gallery-item wide" onclick="openLightbox(23)">
+                    <img src="images/project-09/thumbs/24-sequence-03.jpg" alt="场地鸟瞰三" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">场地总览 · 园林长廊与活动区鸟瞰</div>
+                </div>
+                <div class="gallery-item wide" onclick="openLightbox(24)">
+                    <img src="images/project-09/thumbs/25-sequence-04.jpg" alt="场地鸟瞰四" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">场地总览 · 宝墨园全景鸟瞰</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分会场 -->
+        <div class="reveal">
+            <div class="section-label">Sub-venue — 分会场 · 佛山千古情</div>
+            <div class="gallery">
+                <div class="gallery-item" onclick="openLightbox(20)">
+                    <img src="images/project-09/thumbs/21-foshan-02.jpg" alt="佛山千古情近景" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">佛山千古情 · 红包龙造型装置</div>
+                </div>
+				
+                <div class="gallery-item" onclick="openLightbox(19)">
+                    <img src="images/project-09/thumbs/20-foshan-01.jpg" alt="佛山千古情会场" loading="lazy" onload="this.classList.add('loaded')">
+                    <div class="img-caption">佛山千古情 · 装置细节</div>
+                </div>            </div>
+        </div>		
+		
+		
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="footer-nav">
+        <a href="#" onclick="closePage(); return false;">
+            <span class="arrow">← 返回首页</span>
+        </a>
+        <!-- <a href="work-08.html">
+            上一个 <span class="arrow">→</span>
+        </a>-->
+    </div>
+
+    <!-- 灯箱 -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+        <button class="lightbox-close" onclick="closeLightbox()">×</button>
+        <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">‹</button>
+        <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">›</button>
+        <img src="" alt="" id="lightboxImg">
+        <div class="lightbox-counter" id="lightboxCounter">1 / 25</div>
+    </div>
+
+    <script>
+        // 图片列表（与画廊顺序一致）
+        const galleryImages = [
+            'images/project-09/01-xindong-01.jpg',
+            'images/project-09/02-xindong-02.jpg',
+            'images/project-09/03-xindong-03.jpg',
+            'images/project-09/04-yuyue-01.jpg',
+            'images/project-09/05-yuyue-02.jpg',
+            'images/project-09/06-yuyue-03.jpg',
+            'images/project-09/07-yuyue-04.jpg',
+            'images/project-09/08-huadeng-01.jpg',
+            'images/project-09/09-huadeng-02.jpg',
+            'images/project-09/10-huadeng-03.jpg',
+            'images/project-09/11-linglong-01.jpg',
+            'images/project-09/12-linglong-02.jpg',
+            'images/project-09/13-linglong-03.jpg',
+            'images/project-09/14-linglong-04.jpg',
+            'images/project-09/15-xinnian-01.jpg',
+            'images/project-09/16-xinnian-02.jpg',
+            'images/project-09/17-xinnian-03.jpg',
+            'images/project-09/18-fuwutai-01.jpg',
+            'images/project-09/19-fuwutai-02.jpg',
+            'images/project-09/20-foshan-01.jpg',
+            'images/project-09/21-foshan-02.jpg',
+            'images/project-09/22-sequence-01.jpg',
+            'images/project-09/23-sequence-02.jpg',
+            'images/project-09/24-sequence-03.jpg',
+            'images/project-09/25-sequence-04.jpg'
+        ];
+
+        let currentIndex = 0;
+
+        function openLightbox(index) {
+            currentIndex = index;
+            document.getElementById('lightboxImg').src = galleryImages[index];
+            document.getElementById('lightboxCounter').textContent = `${index + 1} / ${galleryImages.length}`;
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            if (e && e.target !== e.currentTarget && !e.target.closest('.lightbox-close') && !e.target.closest('.lightbox-nav')) return;
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function navigateLightbox(direction) {
+            currentIndex = (currentIndex + direction + galleryImages.length) % galleryImages.length;
+            document.getElementById('lightboxImg').src = galleryImages[currentIndex];
+            document.getElementById('lightboxCounter').textContent = `${currentIndex + 1} / ${galleryImages.length}`;
+        }
+
+        // 键盘导航
+        document.addEventListener('keydown', e => {
+            if (!document.getElementById('lightbox').classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navigateLightbox(-1);
+            if (e.key === 'ArrowRight') navigateLightbox(1);
+        });
+
+
+        // 关闭弹窗 - 直接关闭窗口（支持iframe弹窗和独立页面）
+        function closePage() {
+            // 优先尝试调用父窗口的关闭方法
+            if (window.parent && window.parent.closeModal) {
+                window.parent.closeModal();
+            } else if (window.parent) {
+                // 尝试发送关闭消息
+                window.parent.postMessage('close', '*');
+                window.parent.postMessage({ type: 'close-modal' }, '*');
+            }
+            // 尝试关闭当前窗口
+            try { window.close(); } catch(e) {}
+            // 最后尝试返回上一页
+            try { history.back(); } catch(e) {}
+        }
+
+        // 滚动显示动画
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) e.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+</html>
